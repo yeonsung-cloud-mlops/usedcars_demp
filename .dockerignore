@@ -1,0 +1,17 @@
+**
+!requirements.txt
+!price_model.py
+!backend/
+!backend/requirements.txt
+!backend/app/
+!backend/app/**
+!artifacts/
+!artifacts/price_model.joblib
+!frontend/
+!frontend/out/
+!frontend/out/**
+!deploy/
+!deploy/nginx.conf
+!deploy/Dockerfile.web
+!backend/Dockerfile
+**/__pycache__
