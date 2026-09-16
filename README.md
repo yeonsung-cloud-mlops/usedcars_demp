@@ -17,6 +17,8 @@
 | `validate_*.py`, `compare_accident_model.py` | 표본 검증 및 모델 비교 |
 | `artifacts/` | 로컬 모델·평가 결과·전처리 데이터, Git 제외 |
 
+`main` 브랜치 업데이트는 [GitHub Actions CD](deploy/cd/README.md)를 통해 테스트·이미지 빌드 후 EC2에 자동 배포합니다. 모델은 Git에 넣지 않고 체크섬으로 고정한 비공개 S3 패키지에서 가져옵니다. 배포 실패 시 이전 버전으로 복구합니다.
+
 ## 실행 준비
 
 Python 3.11과 Next.js 16을 지원하는 Node.js 및 npm, 실습 데이터 다운로드용 Git LFS가 필요합니다. Python 패키지는 requirements 파일, 프런트엔드 패키지는 lockfile을 기준으로 설치합니다.

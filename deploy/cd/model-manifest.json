@@ -1,0 +1,9 @@
+{
+  "sha256": "2a6d29b8655f58bf0ad73019b2526a67bea10e3a07e59cfee44c651642ff6868",
+  "key": "models/2a6d29b8655f58bf0ad73019b2526a67bea10e3a07e59cfee44c651642ff6868.tar.gz",
+  "files": {
+    "artifacts/price_model.joblib": "ec58854002a18d3947e4d22177bd4387e9962a056e82e7c80a89ef02ac282a70",
+    "artifacts/prediction_examples.json": "f1a0a9cf07fe08c5aad4fc95334ede6fc019e1e9c69f6a704ed57f053cc0ed7e",
+    "artifacts/baseline_4features/price_model.joblib": "82ddc2e8413f577f90e0e1213f6cc711b8dbc5243581f656ee755289039c8faf"
+  }
+}

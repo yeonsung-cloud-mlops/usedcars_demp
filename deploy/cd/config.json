@@ -1,0 +1,12 @@
+{
+  "account_id": "410618141864",
+  "region": "ap-northeast-2",
+  "bucket": "usedcar-cd-410618141864-ap-northeast-2",
+  "instance_id": "i-00eef087d6aae190c",
+  "instance_role": "usedcar-service-ec2",
+  "github_role": "usedcar-github-deploy",
+  "operator_user": "usedcar-deploy-operator",
+  "repository": "yeonsung-cloud-mlops/usedcars_demp",
+  "oidc_subject": "repo:yeonsung-cloud-mlops@323049364/usedcars_demp@1372656202:ref:refs/heads/main",
+  "public_url": "http://43.202.175.83"
+}

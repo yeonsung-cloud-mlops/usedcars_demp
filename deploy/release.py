@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import shlex
 import tarfile
 import uuid
 
@@ -16,7 +17,7 @@ STATE = ROOT / "deploy/.local/aws-state.json"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["status", "associate", "deploy", "cleanup-staging"])
+    parser.add_argument("action", choices=["status", "associate", "deploy", "retry", "cleanup-staging"])
     parser.add_argument("--profile", required=True)
     args = parser.parse_args()
     state = json.loads(STATE.read_text())
@@ -41,9 +42,19 @@ def main():
         if state.get("command_id"):
             try:
                 result = ssm.get_command_invocation(CommandId=state["command_id"], InstanceId=state["instance_id"])
-                print(json.dumps({key: result[key] for key in ("Status", "StandardOutputContent", "StandardErrorContent")}, indent=2))
+                print(json.dumps({key: result[key][-3000:] for key in ("Status", "StandardOutputContent", "StandardErrorContent")}, indent=2))
             except ssm.exceptions.InvocationDoesNotExist:
                 print("SSM command pending")
+    elif args.action == "retry":
+        invocation = ssm.get_command_invocation(CommandId=state["command_id"], InstanceId=state["instance_id"])
+        if invocation["Status"] not in ("Failed", "TimedOut", "Cancelled"):
+            raise RuntimeError("Only a finished failed deployment may be retried")
+        original = ssm.list_commands(CommandId=state["command_id"])["Commands"][0]
+        response = ssm.send_command(InstanceIds=[state["instance_id"]], DocumentName="AWS-RunShellScript",
+                                   Parameters=original["Parameters"], TimeoutSeconds=900,
+                                   Comment="Retry the same usedcar release")
+        save(command_id=response["Command"]["CommandId"])
+        print("Deployment retried:", state["command_id"])
     elif args.action == "deploy":
         if not (ROOT / "frontend/out/index.html").exists():
             raise RuntimeError("Run npm ci and npm run build in frontend first")
@@ -73,11 +84,23 @@ def main():
         s3.upload_file(str(archive), bucket, key)
         iam.put_role_policy(RoleName=state["role_name"], PolicyName="usedcar-bootstrap-artifacts", PolicyDocument=json.dumps({
             "Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": "s3:GetObject", "Resource": f"arn:aws:s3:::{bucket}/{key}"}]}))
+        download = f"""import boto3, time
+from botocore.exceptions import ClientError
+s3 = boto3.client('s3', region_name='{state['region']}')
+for attempt in range(6):
+    try:
+        s3.download_file('{bucket}', '{key}', '/opt/usedcar/releases/{release}/bundle.tgz')
+        break
+    except ClientError:
+        if attempt == 5:
+            raise
+        time.sleep(5)
+"""
         commands = [
             "set -eu",
             "command -v docker >/dev/null && docker compose version >/dev/null",
             f"install -d -m 755 /opt/usedcar/releases/{release}",
-            f"python3 -c \"import boto3; boto3.client('s3', region_name='{state['region']}').download_file('{bucket}', '{key}', '/opt/usedcar/releases/{release}/bundle.tgz')\"",
+            "python3 -c " + shlex.quote(download),
             f"cd /opt/usedcar/releases/{release}",
             f"echo '{sha}  bundle.tgz' | sha256sum -c -",
             "tar -xzf bundle.tgz",

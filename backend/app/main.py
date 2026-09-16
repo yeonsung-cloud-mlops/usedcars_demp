@@ -129,7 +129,8 @@ def create_app(model_path=None):
     async def ready(request: Request):
         if not app.state.ready:
             return error(request, 503, "not_ready", "예측 모델을 준비하고 있습니다.")
-        return {"status": "ready", "model_version": app.state.metadata["model_version"]}
+        return {"status": "ready", "model_version": app.state.metadata["model_version"],
+                "release": os.environ.get("APP_RELEASE", "local")}
 
     @app.get("/api/v1/metadata")
     async def metadata(request: Request):
