@@ -19,17 +19,21 @@
 
 ## 실행 준비
 
-Python 3.11과 Next.js 16을 지원하는 Node.js 및 npm이 필요합니다. Python 패키지는 requirements 파일, 프런트엔드 패키지는 lockfile을 기준으로 설치합니다.
+Python 3.11과 Next.js 16을 지원하는 Node.js 및 npm, 실습 데이터 다운로드용 Git LFS가 필요합니다. Python 패키지는 requirements 파일, 프런트엔드 패키지는 lockfile을 기준으로 설치합니다.
+
+Git LFS를 설치한 뒤 아래 명령을 실행합니다. macOS에서는 `brew install git-lfs`로 설치할 수 있습니다.
 
 ```bash
+git lfs install
 git clone https://github.com/yeonsung-cloud-mlops/usedcars_demp.git
 cd usedcars_demp
+git lfs pull
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r backend/requirements-dev.txt
 ```
 
-**저장소에는 원본 CSV와 학습된 모델이 포함되지 않습니다.** 예측 및 API 실행에는 신뢰할 수 있는 `artifacts/price_model.joblib`을 별도로 준비해야 합니다. `joblib`과 `pickle`은 신뢰할 수 있는 파일만 로드하세요.
+**실습용 `used_cars_price_prediction.csv`는 Git LFS로 공유합니다.** 파일 크기는 약 324MiB이며, 기존 체크아웃에서도 `git pull` 후 `git lfs pull`로 내려받을 수 있습니다. 원본 `used_cars_data.csv`와 학습된 모델은 포함되지 않습니다. 예측 및 API 실행에는 신뢰할 수 있는 `artifacts/price_model.joblib`을 별도로 준비해야 합니다. `joblib`과 `pickle`은 신뢰할 수 있는 파일만 로드하세요.
 
 ## 예측
 
@@ -146,4 +150,4 @@ docker compose -f deploy/compose.yaml up --build -d
 - [웹 앱 설계 문서](WEB_APP_DESIGN.md): 설계 기록이며 실제 구현과 차이가 있을 수 있습니다.
 - [개발 에이전트 작업 지침](AGENTS.md)
 
-CSV, 학습 산출물, 환경 변수 파일, 인증 키, `deploy/.local/`, 의존성 및 빌드 결과물은 `.gitignore`로 제외합니다.
+실습용 `used_cars_price_prediction.csv`만 Git LFS로 추적합니다. 그 외 CSV, 학습 산출물, 환경 변수 파일, 인증 키, `deploy/.local/`, 의존성 및 빌드 결과물은 `.gitignore`로 제외합니다.

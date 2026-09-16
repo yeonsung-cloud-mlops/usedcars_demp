@@ -38,7 +38,7 @@
 
 ## Git 및 배포
 
-- CSV, `artifacts/`, `.env` 및 인증 키, `deploy/.local/`, 의존성·빌드 캐시는 커밋하지 않습니다.
+- 실습 공유용 `used_cars_price_prediction.csv`는 Git LFS로 추적합니다. 이 파일 외의 CSV, `artifacts/`, `.env` 및 인증 키, `deploy/.local/`, 의존성·빌드 캐시는 커밋하지 않습니다.
 - 커밋 전 `git diff --check`와 스테이징 파일 목록을 확인합니다.
 - AWS 스크립트는 실제 리소스를 변경합니다. 배포 작업 요청 범위에서만 실행합니다.
 - 모델 및 실행 조건이 바뀌면 README도 함께 수정합니다.
